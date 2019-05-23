@@ -13,6 +13,8 @@ namespace AdmCartorioWord
         Dictionary<string, int> naturezaCampo = new Dictionary<string, int>();
         int IdNatureza;
         string NomeCampo;
+        bool iniciouOutorgantes = false;
+        bool inicouOutorgados = false;
 
         // Função que inicia o Ribbon
         private void FaixaOpcoes_Load(object sender, RibbonUIEventArgs e)
@@ -120,7 +122,7 @@ namespace AdmCartorioWord
         /// </summary>
         /// <param name="posicao">posicao que inicia o campo</param>
         /// <param name="nomeCampo">Nome que fica no placeholder</param>
-        private static void InserirCampoNoWord(int posicao, string nomeCampo)
+        private static void InserirCampoNoWord(int posicao, string nomeCampo, bool isCampo = true)
         {
 
             Range posicaoRange;
@@ -160,11 +162,19 @@ namespace AdmCartorioWord
                 WdFieldType.wdFieldFormTextInput);
 
             // Campo inicialmente vazio, então ele é considerado erro.
-            input.Name = nomeCampo;
+            
             input.TextInput.Default = nomeCampo;
             input.HelpText = nomeCampo;
-            input.Result = $"[{nomeCampo}]";
-
+            if (isCampo)
+            {
+                input.Name = nomeCampo;
+                input.Result = $"[{nomeCampo}]";
+            }
+            else
+            {
+                input.Result = $"<{nomeCampo}>";
+                input.Enabled = false;                
+            }
         }
 
         private void DesbloquearBloquearBotao()
@@ -213,5 +223,35 @@ namespace AdmCartorioWord
 
         #endregion
 
+        private void BtnOutorgantes_Click(object sender, RibbonControlEventArgs e)
+        {
+            int posicao = GetPosicaoCursorDoTeclado();
+            if (iniciouOutorgantes)
+            {
+                InserirCampoNoWord(posicao, @"outorgantes /", false);
+                iniciouOutorgantes = false;
+            }
+            else
+            {
+                InserirCampoNoWord(posicao, "outorgantes", false);
+                iniciouOutorgantes = true;
+            }
+
+        }
+
+        private void BtnOutorgados_Click(object sender, RibbonControlEventArgs e)
+        {
+            int posicao = GetPosicaoCursorDoTeclado();
+            if (inicouOutorgados)
+            {
+                InserirCampoNoWord(posicao, @"outorgados /", false);
+                inicouOutorgados = false;
+            }
+            else
+            {
+                InserirCampoNoWord(posicao, "outorgados", false);
+                inicouOutorgados = true;
+            }
+        }
     }
 }
